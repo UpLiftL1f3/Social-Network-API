@@ -1,6 +1,35 @@
 const { Schema, model } = require('mongoose');
 
-// Schema to create a course model
+// Schema to create a thought model
+const reactionSchema = new Schema(
+  {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
+    },
+    reactionBody: {
+      type: String,
+      required: true,
+      maxLength: 280,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: formatDate,
+    },
+  },
+  {
+    toJSON: {
+      getters: true,
+    },
+  }
+);
+
+// Schema to create a thought model
 const thoughtSchema = new Schema(
   {
     thoughtText: {
@@ -9,7 +38,7 @@ const thoughtSchema = new Schema(
       minLength: 1,
       maxLength: 280,
     },
-    createAt: {
+    createdAt: {
       type: Date,
       default: Date.now,
       get: formatDate,
@@ -18,12 +47,7 @@ const thoughtSchema = new Schema(
       type: String,
       required: true,
     },
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'reaction',
-      },
-    ],
+    reactions: [reactionSchema],
   },
   {
     toJSON: {
@@ -43,6 +67,6 @@ thoughtSchema.virtual('reactionCount').get(function () {
   return this.reactions.length;
 });
 
-const Thought = model('thought', thoughtSchema);
+const Thought = model('Thought', thoughtSchema);
 
 module.exports = Thought;
